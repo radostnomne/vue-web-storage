@@ -1,10 +1,16 @@
 import {parseJSON} from "./util";
+import fallbackStorage from "./fallbackStorage";
 
 class Storage {
 
   constructor(prefix = 'app_', driver = 'local') {
     this.prefix = prefix;
-    this.storage = window[`${String(driver)}Storage`];
+    try {
+      this.storage = window[`${String(driver)}Storage`];
+    } catch (err) {
+      console.error(`Failed to get ${this.prefix} storage. Will use fallback storage`, err);
+      this.storage = fallbackStorage;
+    }
   }
 
   prefixKey(key) {
